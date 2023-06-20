@@ -1,14 +1,10 @@
-
-
-
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:quizappfirebase/firebase_authentication/firebase_authentication.dart';
 
 import '../style/style.dart';
-
-
 
 class Registration_Screen extends StatefulWidget {
   const Registration_Screen({Key? key}) : super(key: key);
@@ -18,27 +14,17 @@ class Registration_Screen extends StatefulWidget {
 }
 
 class _Registration_ScreenState extends State<Registration_Screen> {
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
 
-  final TextEditingController emailController=TextEditingController();
-  final TextEditingController passwordController=TextEditingController();
+ Future registerWithEmailPass() async {
+    await FirebaseAuth.instance
+        .createUserWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+    );
 
-  // @override
-  // void dispose()
-  // {
-  //   super.dispose();
-  //   emailController.dispose();
-  //   passwordController.dispose();
-  // }
-
-  void registerUser(e,p)async {
-    setState(() {
-       FirebaseAuthMethods().registerWithEmail( e, p,context);
-      print("Email: $e");
-      print("pass: $p");
-
-    });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -51,14 +37,14 @@ class _Registration_ScreenState extends State<Registration_Screen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             TextFormField(
-              controller: emailController,
+              controller: _emailController,
               decoration: AppInputDecoration("Email Address"),
             ),
             SizedBox(
               height: 20,
             ),
             TextFormField(
-              controller: passwordController,
+              controller: _passwordController,
               decoration: AppInputDecoration("Password"),
             ),
             SizedBox(
@@ -68,14 +54,15 @@ class _Registration_ScreenState extends State<Registration_Screen> {
               child: ElevatedButton(
                   style: AppButtonStyle(),
                   onPressed: () {
-                    var e=emailController.text;
-                    var p=passwordController.text;
-                    registerUser(e, p);
+                    setState(() {
+                      registerWithEmailPass();
+                    });
                   },
-                  child: SuccessButtonChild('Login')),
+                  child: SuccessButtonChild('Register')),
             ),
           ],
         ),
       ),
-    );  }
+    );
+  }
 }
